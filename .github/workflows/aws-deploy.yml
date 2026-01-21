@@ -17,16 +17,17 @@ jobs:
       # 步骤2：配置 SSH 免密登录
       - name: Configure SSH
         run: |
-          mkdir ~/.ssh/
-          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+            mkdir -p ~/.ssh/
+            echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            # 直接扫描目标主机的默认端口（22）
+            ssh-keyscan ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
 
       # 步骤3：SSH 登录 EC2 执行 Python 项目部署
       - name: Deploy pypractice to AWS EC2
         run: |
-          ssh -p ${{ secrets.AWS_HOST }} ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
+          ssh -p ${{ secrets.AWS_PORT }} ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
             # 进入项目目录（你的指定路径）
             cd /home/ec2-user/www/pypractice
             
