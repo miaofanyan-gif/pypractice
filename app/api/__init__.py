@@ -8,5 +8,4 @@ user_bp = Blueprint('user', __name__, url_prefix='/api/user')
 @user_bp.route('/list')
 def list():
     users = UserService.index()
-    users = [user.to_dict() for user in users]
     return success_response(users)
