@@ -1,0 +1,44 @@
+# 工作流名称
+name: Auto Deploy to AWS EC2
+
+# 触发条件：推送到main分支时执行
+on:
+  push:
+    branches: [ main ]
+
+# 工作流任务
+jobs:
+  deploy:
+    # 运行环境（GitHub提供的虚拟机）
+    runs-on: ubuntu-latest
+
+    steps:
+      # 步骤1：拉取GitHub仓库代码到虚拟机
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 步骤2：配置SSH，连接AWS EC2
+      - name: Configure SSH
+        run: |
+          # 创建SSH目录并设置权限
+          mkdir -p ~/.ssh/
+          # 将私钥写入文件
+          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/aws_ec2.pem
+          chmod 600 ~/.ssh/aws_ec2.pem
+          # 信任EC2主机（避免首次连接的确认提示）
+          ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+
+      # 步骤3：通过SSH连接EC2，执行部署命令
+      - name: Deploy to EC2
+        run: |
+          ssh -i ~/.ssh/aws_ec2.pem ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
+            # 进入项目目录（需提前在EC2创建，如/var/my_project）
+            cd /var/pypractice
+            # 拉取最新代码（需EC2已配置git并关联GitHub仓库）
+            git pull origin main
+            # 安装依赖（适配Python项目）
+            /usr/bin/python3.9 -m pip install -r requirements.txt --upgrade
+            # 重启应用（示例：假设是Flask应用，用nohup后台运行）
+            pkill -f "python3.9 run.py" || true
+            nohup /usr/bin/python3.9 run.py > run.log 2>&1 &
+          EOF
