@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: AWS_HOST 
     steps:
       # 步骤1：签出仓库代码（GitHub Actions 运行环境）
       - name: Checkout code
