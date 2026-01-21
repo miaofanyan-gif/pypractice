@@ -20,13 +20,12 @@ jobs:
       # 步骤2：配置SSH，连接AWS EC2
       - name: Configure SSH
         run: |
-          # 创建SSH目录并设置权限
           mkdir -p ~/.ssh/
-          # 将私钥写入文件
           echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/aws_ec2.pem
           chmod 600 ~/.ssh/aws_ec2.pem
-          # 信任EC2主机（避免首次连接的确认提示）
-          ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+          # 修正 ssh-keyscan 命令，仅传入主机IP
+          ssh-keyscan ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
+
 
       # 步骤3：通过SSH连接EC2，执行部署命令
       - name: Deploy to EC2
