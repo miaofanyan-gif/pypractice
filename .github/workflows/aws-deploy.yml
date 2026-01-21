@@ -29,7 +29,7 @@ jobs:
           cat << EOF > ~/.ssh/config Host ${{ secrets.AWS_HOST }}
           StrictHostKeyChecking no
           UserKnownHostsFile /dev/null
-        EOF
+          EOF
           
 
       # 步骤3：通过SSH连接EC2，执行部署命令
