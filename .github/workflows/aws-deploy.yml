@@ -30,16 +30,24 @@ jobs:
         run: |
           ssh -p ${{ secrets.AWS_PORT }} ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
             # 进入项目目录（你的指定路径）
-            cd /home/ec2-user/www/pypractice
+            cd /home/ec2-user/dnmp/www/python/pypractice
             
             # 拉取最新代码（确保服务器已关联 GitHub 仓库）
             git pull origin main
             
             # 安装/更新 Python 依赖（建议用虚拟环境，更安全）
            
+            # Python 项目（Pip）
+            if [ -f "requirements.txt" ]; then
+                docker exec -it dnmp-python pip install -r requirements.txt
+            fi
+
+         
+
+
+
             # 3. 安装依赖（requirements.txt 是 Python 项目依赖文件）
-            pip install --upgrade pip
-            pip install -r requirements.txt
+            
             
             # 重启 Python 服务（两种常见方式，选其一即可）
             # 方式1：用 systemd 管理（推荐，需提前配置 service 文件）
@@ -49,7 +57,8 @@ jobs:
             # sudo supervisorctl restart pypractice
             
             # 方式3：简单的后台运行（适合测试，不推荐生产）
-             nohup python3.9 run.py > app.log 2>&1 &
+            #nohup python3.9 run.py > app.log 2>&1 &
+
             
             # 可选：清理缓存
             # rm -rf __pycache__
