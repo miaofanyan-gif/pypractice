@@ -7,7 +7,7 @@ import os
 
 
 def create_app(env="development"):
-
+    print(555)
     app = Flask(__name__)
     app.register_blueprint(user_bp)
     config = {'development': DevelopmentConfig, 'production': ProdutionConfig}
