@@ -7,4 +7,4 @@ class UserService():
     def index():
         users = User.query.get(1)
 
-        return users
+        return {'usename': users.username, "age": users.age, 'create_time': users.create_time}
