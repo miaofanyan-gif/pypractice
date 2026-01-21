@@ -1,48 +1,59 @@
 # 工作流名称
-name: Auto Deploy to AWS EC2
+name: SSH Deploy Python Project to AWS EC2
 
-# 触发条件：推送到main分支时执行
+# 触发条件：推送到 main 分支时执行
 on:
   push:
     branches: [ main ]
 
-# 工作流任务
 jobs:
   deploy:
-    # 运行环境（GitHub提供的虚拟机）
     runs-on: ubuntu-latest
-
     steps:
-      # 步骤1：拉取GitHub仓库代码到虚拟机
+      # 步骤1：签出仓库代码（GitHub Actions 运行环境）
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 步骤2：配置SSH，连接AWS EC2
+      # 步骤2：配置 SSH 免密登录
       - name: Configure SSH
         run: |
-          # 创建并设置 SSH 目录权限
           mkdir -p ~/.ssh/
-          echo "${{ secrets.AWS_SSH_KEY }}" > ~/.ssh/aws_ec2.pem
-          chmod 600 ~/.ssh/aws_ec2.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
-          # 配置 SSH 跳过主机密钥验证，彻底避免 ssh-keyscan 错误
-          cat << EOF > ~/.ssh/config Host ${{ secrets.AWS_HOST }}
-          StrictHostKeyChecking no
-          UserKnownHostsFile /dev/null
-          EOF
-          
-
-      # 步骤3：通过SSH连接EC2，执行部署命令
-      - name: Deploy to EC2
+      # 步骤3：SSH 登录 EC2 执行 Python 项目部署
+      - name: Deploy pypractice to AWS EC2
         run: |
-          ssh -i ~/.ssh/aws_ec2.pem ${{ secrets.AWS_USERNAME }}@${{ secrets.AWS_HOST }} << 'EOF'
-            # 进入项目目录（需提前在EC2创建，如/var/my_project）
-            cd /var/pypractice
-            # 拉取最新代码（需EC2已配置git并关联GitHub仓库）
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+            # 进入项目目录（你的指定路径）
+            cd /home/ec2-user/www/pypractice
+            
+            # 拉取最新代码（确保服务器已关联 GitHub 仓库）
             git pull origin main
-            # 安装依赖（适配Python项目）
-            /usr/bin/python3.9 -m pip install -r requirements.txt --upgrade
-            # 重启应用（示例：假设是Flask应用，用nohup后台运行）
-            pkill -f "python3.9 run.py" || true
-            nohup /usr/bin/python3.9 run.py > run.log 2>&1 &
+            
+            # 安装/更新 Python 依赖（建议用虚拟环境，更安全）
+            # 1. 检查并创建虚拟环境（首次部署需要）
+            if [ ! -d "venv" ]; then
+              python3 -m venv venv
+            fi
+            # 2. 激活虚拟环境
+            source venv/bin/activate
+            # 3. 安装依赖（requirements.txt 是 Python 项目依赖文件）
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            
+            # 重启 Python 服务（两种常见方式，选其一即可）
+            # 方式1：用 systemd 管理（推荐，需提前配置 service 文件）
+            sudo systemctl restart pypractice
+            
+            # 方式2：用 supervisor 管理（如果用 supervisor）
+            # sudo supervisorctl restart pypractice
+            
+            # 方式3：简单的后台运行（适合测试，不推荐生产）
+            # nohup python3 app.py > app.log 2>&1 &
+            
+            # 可选：清理缓存
+            # rm -rf __pycache__
           EOF
