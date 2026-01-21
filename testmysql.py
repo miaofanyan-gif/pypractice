@@ -17,4 +17,4 @@ def check_port(ip, port):
 
 
 # 调用示例：替换成你的服务器 IP
-check_port("127.0.0.1", 3306)
+check_port("127.0.0.1SSSS", 3306)
