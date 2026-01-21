@@ -36,25 +36,20 @@ jobs:
             git pull origin main
             
             # 安装/更新 Python 依赖（建议用虚拟环境，更安全）
-            # 1. 检查并创建虚拟环境（首次部署需要）
-            if [ ! -d "venv" ]; then
-              python3 -m venv venv
-            fi
-            # 2. 激活虚拟环境
-            source venv/bin/activate
+           
             # 3. 安装依赖（requirements.txt 是 Python 项目依赖文件）
             pip install --upgrade pip
             pip install -r requirements.txt
             
             # 重启 Python 服务（两种常见方式，选其一即可）
             # 方式1：用 systemd 管理（推荐，需提前配置 service 文件）
-            sudo systemctl restart pypractice
+            #sudo systemctl restart pypractice
             
             # 方式2：用 supervisor 管理（如果用 supervisor）
             # sudo supervisorctl restart pypractice
             
             # 方式3：简单的后台运行（适合测试，不推荐生产）
-            # nohup python3 app.py > app.log 2>&1 &
+             nohup python3.9 run.py > app.log 2>&1 &
             
             # 可选：清理缓存
             # rm -rf __pycache__
