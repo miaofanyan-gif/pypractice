@@ -39,8 +39,9 @@ jobs:
            
             # Python 项目（Pip）
             if [ -f "requirements.txt" ]; then
-                docker exec -it dnmp-python pip install -r requirements.txt
+                sudo docker exec -it dnmp-python pip install -r requirements.txt
             fi
+
 
          
 
@@ -58,6 +59,7 @@ jobs:
             
             # 方式3：简单的后台运行（适合测试，不推荐生产）
             #nohup python3.9 run.py > app.log 2>&1 &
+            sudo docker restart dnmp-python
 
             
             # 可选：清理缓存
