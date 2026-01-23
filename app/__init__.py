@@ -7,8 +7,11 @@ import os
 
 
 def create_app(env="development"):
-    print(555)
-    app = Flask(__name__)
+ # 获取当前文件（__init__.py）的目录路径
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 拼接得到templates文件夹的绝对路径（向上回退到项目根目录，再找templates）
+    template_dir = os.path.join(os.path.dirname(current_dir), 'templates')
+    app = Flask(__name__, template_folder=template_dir)
     app.register_blueprint(user_bp)
     config = {'development': DevelopmentConfig, 'production': ProdutionConfig}
 

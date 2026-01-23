@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+from flask import Flask, render_template
 
 # 加载环境变量
 # 第一步：加载 .env（必须在导入其他模块之前）
@@ -25,7 +26,8 @@ app = create_app(app_env)
 
 @app.route('/')
 def helo_world():
-    return "Hello,Flask!"
+    return render_template('index.html')
+
 
 
 if __name__ == '__main__':

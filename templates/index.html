@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>叶子的主页</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        /* 粉色系布幕背景效果 */
+        body {
+            /* 替换为粉色渐变，从浅粉到深粉过渡 */
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1, #f06292, #ec407a, #e91e63, #d81b60, #c2185b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            /* 粉色系文字主色 */
+            color: #ad1457;
+        }
+
+        /* 背景渐变动画 - 粉色布幕效果 */
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 导航栏样式 */
+        nav {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        /* 菜单按钮样式 - 粉色系 */
+        .nav-btn {
+            /* 主按钮粉色 */
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            /* 鼠标悬浮深粉色 */
+            background-color: #ad1457;
+            transform: scale(1.05);
+        }
+
+        .nav-btn.active {
+            /* 激活状态深粉色 */
+            background-color: #ad1457;
+        }
+
+        /* 内容区域样式 */
+        .content {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .content h1 {
+            font-size: 42px;
+            margin-bottom: 30px;
+            /* 标题粉色 */
+            color: #c2185b;
+        }
+
+        .content p {
+            font-size: 24px;
+            line-height: 1.8;
+        }
+
+        /* 关于我页面样式 */
+        #about {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <button class="nav-btn active" id="welcome-btn">HomePage</button>
+            <button class="nav-btn" id="about-btn">About Me</button>
+        </div>
+    </nav>
+
+    <!-- 欢迎页面内容 -->
+    <div class="content" id="welcome">
+        <h1> Welcome to Fanyan Miao' HomePage </h1>
+        <p>It's a pleasure to have you visit my personal homepage!</p>
+    </div>
+
+    <!-- 关于我页面内容 -->
+    <div class="content" id="about">
+        <h1>About Me</h1>
+        <p>My name is Fanyan, and I'm an IT student</p>
+    </div>
+
+    <!-- JavaScript 实现菜单切换 -->
+    <script>
+        // 获取元素
+        const welcomeBtn = document.getElementById('welcome-btn');
+        const aboutBtn = document.getElementById('about-btn');
+        const welcomeContent = document.getElementById('welcome');
+        const aboutContent = document.getElementById('about');
+
+        // 欢迎按钮点击事件
+        welcomeBtn.addEventListener('click', function () {
+            // 切换按钮状态
+            welcomeBtn.classList.add('active');
+            aboutBtn.classList.remove('active');
+            // 切换内容显示
+            welcomeContent.style.display = 'block';
+            aboutContent.style.display = 'none';
+        });
+
+        // 关于我按钮点击事件
+        aboutBtn.addEventListener('click', function () {
+            // 切换按钮状态
+            aboutBtn.classList.add('active');
+            welcomeBtn.classList.remove('active');
+            // 切换内容显示
+            welcomeContent.style.display = 'none';
+            aboutContent.style.display = 'block';
+        });
+    </script>
+</body>
+
+</html>
